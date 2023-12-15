@@ -34,6 +34,6 @@ Hướng đến đối tượng thông thường sẽ là giới trẻ hoặc c�
 - Quản lý tài khoản (quản lý mật khẩu , tài khoản,...)
 
 # User (Người dùng)
-- Nghe nhạc , thêm nhạc váo dánh sách favorite
+- Nghe nhạc , thêm nhạc vào danh sách favorite
 - Tạo playlist cá nhân
 
