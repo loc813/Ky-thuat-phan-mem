@@ -19,6 +19,10 @@ Kiểm tra và quản lý API bằng Postman
 - Tìm kiếm bằng giọng nói hoặc tìm kiếm theo lời bài hát (dự kiến )
 - Danh sách tải xuống cho thành viên vip
 
+# Đối tượng 
+Hướng đến đối tượng thông thường sẽ là giới trẻ hoặc có thể là những người lớn tuổi.
+
+
 # Thuật toán sử dụng 
 - Thuật toán tìm kiếm
 - Thuật toán sắp xếp
@@ -33,5 +37,3 @@ Kiểm tra và quản lý API bằng Postman
 - Nghe nhạc , thêm nhạc váo dánh sách favorite
 - Tạo playlist cá nhân
 
-# Đối tượng 
-Hướng đến đối tượng thông thường sẽ là giới trẻ hoặc có thể là những người lớn tuổi.
