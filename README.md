@@ -18,12 +18,12 @@ Kiểm tra và quản lý API bằng Postman
 - Tìm kiếm bằng giọng nói hoặc tìm kiếm theo lời bài hát (dự kiến )
 - Danh sách tải xuống cho thành viên vip
 
-#Thuật toán sử dụng 
+# Thuật toán sử dụng 
 - Thuật toán tìm kiếm
 - Thuật toán sắp xếp
 - Thuật toán mã hóa và giải mã để mã hóa thông tin đăng nhập của người
 
-#Quản lý ( Admin)
+# Quản lý ( Admin)
 - Quản lý người dùng (quyền truy cập, thông tin người dùng)
 - Quản lý nội dung ( quẩn lý bài hát , album, playlist ...)
 - Quản lý tài khoản (quản lý mật khẩu , tài khoản,...)
