@@ -7,7 +7,7 @@ Bài tập lớn môn kỹ thuật phần mềm . Bao gồm các thành viên :
 - Nguyễn Thành Hưng
 
 # Công nghệ
-- Phần mềm music đơn giản cho người dùng có thể nghe nhạc trên nền tảng điện thoại bằng - ngôn ngữ Dart 
+- Phần mềm music cho người dùng có thể nghe nhạc trên nền tảng điện thoại bằng - ngôn ngữ Dart 
 - Bằng framework Flutter 
 - Quản lý dữ liệu bằng firebase
 - Kiểm tra và quản lý API bằng Postman
