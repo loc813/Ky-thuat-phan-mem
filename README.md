@@ -4,6 +4,7 @@ Thực hành thiết kế và phát triển ứng dụng của môn kỹ thuật
 Bài tập lớn môn kỹ thuật phần mềm . Bao gồm các thành viên : 
 - Bùi Đình Lộc
 - Nguyễn Thanh Bình
+- Nguyễn Thành Hưng
 
 # Công nghệ
 Phần mềm music đơn giản cho người dùng có thể nghe nhạc trên nền tảng điện thoại bằng ngôn ngữ Dart 
