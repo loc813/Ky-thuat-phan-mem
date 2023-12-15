@@ -23,10 +23,14 @@ Kiểm tra và quản lý API bằng Postman
 - Thuật toán sắp xếp
 - Thuật toán mã hóa và giải mã để mã hóa thông tin đăng nhập của người
 
-# Quản lý ( Admin)
+# Admin (Quản lý)
 - Quản lý người dùng (quyền truy cập, thông tin người dùng)
 - Quản lý nội dung ( quẩn lý bài hát , album, playlist ...)
 - Quản lý tài khoản (quản lý mật khẩu , tài khoản,...)
+
+# User (Người dùng)
+- Nghe nhạc , thêm nhạc váo dánh sách favorite
+- Tạo playlist cá nhân
 
 # Đối tượng 
 Hướng đến đối tượng thông thường sẽ là giới trẻ hoặc có thể là những người lớn tuổi.
