@@ -1,5 +1,3 @@
-// ignore_for_file: avoid_function_literals_in_foreach_calls
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -10,7 +8,7 @@ import '../utils/api_service.dart';
 import 'screens.dart';
 
 class FavoriteScreen extends StatefulWidget {
-  const FavoriteScreen({super.key});
+  const FavoriteScreen({Key? key}) : super(key: key);
 
   @override
   State<FavoriteScreen> createState() => _FavoriteScreenState();
@@ -21,6 +19,7 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
   List<SongModel> musicList = [];
   FirebaseAuth auth = FirebaseAuth.instance;
   User? user = FirebaseAuth.instance.currentUser;
+  bool isSequential = true; // Biến để lưu trữ trạng thái phát nhạc
 
   @override
   void initState() {
@@ -39,13 +38,15 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
       data: ThemeData.dark(),
       child: Container(
         decoration: BoxDecoration(
-            gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
               Colors.deepPurple.shade800.withOpacity(0.8),
               Colors.deepPurple.shade200.withOpacity(0.8)
-            ])),
+            ],
+          ),
+        ),
         child: Scaffold(
           appBar: AppBar(
             automaticallyImplyLeading: false,
@@ -53,17 +54,31 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
               "Favourite List",
               style: TextStyle(color: Colors.white, fontSize: 25),
             ),
-            actions: const [
+            actions: [
               IconButton(
-                  onPressed: null,
-                  icon: Icon(
-                    Icons.favorite,
-                    color: Colors.red,
-                    size: 25,
-                  ))
+                onPressed: () {
+                  setState(() {
+                    isSequential = true; // Chuyển sang chế độ phát nhạc theo thứ tự
+                  });
+                },
+                icon: Icon(
+                  Icons.play_arrow,
+                  color: isSequential ? Colors.white : Colors.grey, // Màu icon tùy thuộc vào trạng thái
+                ),
+              ),
+              IconButton(
+                onPressed: () {
+                  setState(() {
+                    isSequential = false; // Chuyển sang chế độ phát nhạc ngẫu nhiên
+                  });
+                },
+                icon: Icon(
+                  Icons.shuffle,
+                  color: isSequential ? Colors.grey : Colors.white, // Màu icon tùy thuộc vào trạng thái
+                ),
+              ),
             ],
           ),
-          // body:
           body: customListCard(),
           bottomNavigationBar: const CustomNavBar(),
         ),
@@ -77,13 +92,13 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
         .doc(uid)
         .collection('favorite')
         .get()
-        .then((QuerySnapshot querySnapshot) => {
-              querySnapshot.docs.forEach((doc) {
-                setState(() {
-                  favoriteList.add(doc['id']);
-                });
-              })
-            });
+        .then((QuerySnapshot querySnapshot) {
+      querySnapshot.docs.forEach((doc) {
+        setState(() {
+          favoriteList.add(doc['id']);
+        });
+      });
+    });
   }
 
   Future<void> fetchMusicData() async {
@@ -94,11 +109,8 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
   }
 
   Widget customListCard() {
-    List<SongModel> displayedSongs = [];
-    for (int i = 0; i < favoriteList.length; i++) {
-      displayedSongs.add(
-          musicList.firstWhere((element) => element.id == favoriteList[i]));
-    }
+    List<SongModel> displayedSongs = isSequential ? musicList : _shuffleMusicList(); // Lấy danh sách bài hát tùy thuộc vào trạng thái
+
     return ListView.separated(
       separatorBuilder: (_, __) => const Divider(),
       padding: EdgeInsets.zero,
@@ -107,13 +119,14 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
         return InkWell(
           onTap: () {
             Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => SongScreen(
-                    song: displayedSongs,
-                    currentIndex: index,
-                  ),
-                ));
+              context,
+              MaterialPageRoute(
+                builder: (context) => SongScreen(
+                  song: displayedSongs,
+                  currentIndex: index,
+                ),
+              ),
+            );
           },
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -122,18 +135,24 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
                 padding: const EdgeInsets.only(left: 8),
                 child: Padding(
                   padding: const EdgeInsets.only(
-                      left: 8, bottom: 8, right: 8, top: 4),
+                    left: 8,
+                    bottom: 8,
+                    right: 8,
+                    top: 4,
+                  ),
                   child: SizedBox(
                     child: FadeInImage.assetNetwork(
-                        height: 60,
-                        width: 60,
-                        placeholder: "assets/images/loading.jpg",
-                        image: musicList
-                            .firstWhere(
-                                (element) => element.id == favoriteList[index])
-                            .image
-                            .toString(),
-                        fit: BoxFit.fill),
+                      height: 60,
+                      width: 60,
+                      placeholder: "assets/images/loading.jpg",
+                      image: musicList
+                          .firstWhere(
+                            (element) => element.id == favoriteList[index],
+                          )
+                          .image
+                          .toString(),
+                      fit: BoxFit.fill,
+                    ),
                   ),
                 ),
               ),
@@ -144,46 +163,59 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
                     Text(
                       musicList
                           .firstWhere(
-                              (element) => element.id == favoriteList[index])
+                            (element) => element.id == favoriteList[index],
+                          )
                           .title
                           .toString(),
-                      style: const TextStyle(color: Colors.white, fontSize: 18),
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 18,
+                      ),
                     ),
-                    const SizedBox(
-                      height: 8,
-                    ),
+                    const SizedBox(height: 8),
                     Text(
                       musicList
                           .firstWhere(
-                              (element) => element.id == favoriteList[index])
+                            (element) => element.id == favoriteList[index],
+                          )
                           .artist
                           .toString(),
-                      style: const TextStyle(color: Colors.grey, fontSize: 12),
+                      style: const TextStyle(
+                        color: Colors.grey,
+                        fontSize: 12,
+                      ),
                     ),
                   ],
                 ),
               ),
               IconButton(
-                  onPressed: () {
-                    setState(() {
-                      FirebaseFirestore.instance
-                          .collection('users')
-                          .doc(FirebaseAuth.instance.currentUser!.uid)
-                          .collection('favorite')
-                          .doc(favoriteList[index])
-                          .delete();
-                      favoriteList.remove(favoriteList[index]);
-                    });
-                  },
-                  icon: const Icon(
-                    Icons.remove_circle,
-                    color: Colors.red,
-                  ))
+                onPressed: () {
+                  setState(() {
+                    FirebaseFirestore.instance
+                        .collection('users')
+                        .doc(FirebaseAuth.instance.currentUser!.uid)
+                        .collection('favorite')
+                        .doc(favoriteList[index])
+                        .delete();
+                    favoriteList.remove(favoriteList[index]);
+                  });
+                },
+                icon: const Icon(
+                  Icons.remove_circle,
+                  color: Colors.red,
+                ),
+              ),
             ],
           ),
         );
       },
     );
+  }
+
+  List<SongModel> _shuffleMusicList() {
+    List<SongModel> shuffledSongs = List.from(musicList);
+    shuffledSongs.shuffle();
+    return shuffledSongs;
   }
 }
 
@@ -205,42 +237,46 @@ class _CustomNavBarState extends State<_CustomNavBar> {
     const FavoriteScreen(),
     const ProfileScreen()
   ];
+
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
       Navigator.push(
-          context, MaterialPageRoute(builder: (context) => _screens[index]));
+        context,
+        MaterialPageRoute(builder: (context) => _screens[index]),
+      );
     });
   }
 
   @override
   Widget build(BuildContext context) {
     return BottomNavigationBar(
-        type: BottomNavigationBarType.fixed,
-        backgroundColor: Colors.deepPurple.shade800,
-        unselectedItemColor: Colors.white,
-        selectedItemColor: Colors.white,
-        showUnselectedLabels: false,
-        showSelectedLabels: false,
-        currentIndex: _selectedIndex,
-        onTap: _onItemTapped,
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: "Home",
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.favorite_border_outlined),
-            label: "Favotires",
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.play_circle_outlined),
-            label: "Play",
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.people_alt_outlined),
-            label: "Profile",
-          ),
-        ]);
+      type: BottomNavigationBarType.fixed,
+      backgroundColor: Colors.deepPurple.shade800,
+      unselectedItemColor: Colors.white,
+      selectedItemColor: Colors.white,
+      showUnselectedLabels: false,
+      showSelectedLabels: false,
+      currentIndex: _selectedIndex,
+      onTap: _onItemTapped,
+      items: const [
+        BottomNavigationBarItem(
+          icon: Icon(Icons.home),
+          label: "Home",
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.favorite_border_outlined),
+          label: "Favorites",
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.play_circle_outlined),
+          label: "Play",
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.people_alt_outlined),
+          label: "Profile",
+        ),
+      ],
+    );
   }
 }

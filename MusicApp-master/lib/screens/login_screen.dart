@@ -231,15 +231,42 @@ class _LoginFormState extends State<LoginForm> {
   }
 
   Future signIn() async {
-    try {
-      await FirebaseAuth.instance.signInWithEmailAndPassword(
-        email: widget.emailController.text.trim(),
-        password: widget.passwordController.text.trim(),
+  try {
+    final userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(
+      email: widget.emailController.text.trim(),
+      password: widget.passwordController.text.trim(),
+    );
+    
+    // Kiểm tra xác thực email
+    if (!userCredential.user!.emailVerified) {
+      await userCredential.user!.sendEmailVerification();
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text("Verify your email"),
+            content: Text("An email has been sent to ${userCredential.user!.email}. Please verify your email before logging in."),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: Text("OK"),
+              ),
+            ],
+          );
+        },
       );
-      navigatorKey.currentState?.pushNamed('/');
-    } on FirebaseAuthException catch (e) {
-      scaffoldMessengerKey.currentState?.showSnackBar(
-          SnackBar(content: Text("${e.message}"), backgroundColor: Colors.red));
+      return;
     }
+
+    // Nếu email đã được xác thực, điều hướng đến màn hình chính
+    Navigator.of(context).pushNamed('/');
+  } on FirebaseAuthException catch (e) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text("${e.message}"),
+        backgroundColor: Colors.red,
+      ),
+    );
   }
+}
 }

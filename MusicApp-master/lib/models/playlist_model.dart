@@ -1,41 +1,39 @@
-
-
 import 'package:music_app/models/song_model.dart';
 
-class Playlist {
-  String? id;
-  String? title;
-  String? description;
-  String? imageUrl;
-  List<SongModel> songs = [];
+class PlaylistModel {
+  String? title; // Tiêu đề của danh sách phát
+  List<SongModel>? songs; // Danh sách các bài hát trong danh sách phát
+  String? sourceUrl; // URL nguồn của danh sách phát để phát nhạc
+  String? artist; // Tên nghệ sĩ của danh sách phát
+  String? imageUrl; // URL hình ảnh của danh sách phát
 
-  Playlist({
-    required this.id,
-    required this.title,
-    this.description,
-    required this.imageUrl,
-    required this.songs,
+  PlaylistModel({
+    this.title,
+    this.songs,
+    this.sourceUrl,
+    this.artist,
+    this.imageUrl,
   });
 
-  factory Playlist.fromJson(Map<String, dynamic> json) {
-    return Playlist(
-      id: json["id"],
+  factory PlaylistModel.fromJson(Map<String, dynamic> json) {
+    return PlaylistModel(
       title: json['title'],
-      description: json['description'],
-      imageUrl: json['imageUrl'],
-      songs: (json['songs'] as List<dynamic>)
-          .map((song) => SongModel.fromJson(song))
+      sourceUrl: json['sourceUrl'], // Lấy giá trị của sourceUrl từ JSON
+      artist: json['artist'], // Lấy giá trị của artist từ JSON
+      imageUrl: json['imageUrl'], // Lấy giá trị của imageUrl từ JSON
+      songs: (json['songs'] as List<dynamic>?)
+          ?.map((songJson) => SongModel.fromJson(songJson))
           .toList(),
     );
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
-    data['id'] = id;
     data['title'] = title;
-    data['description'] = description;
-    data['imageUrl'] = imageUrl;
-    data['songs'] = songs.map((song) => song.toJson()).toList();
+    data['sourceUrl'] = sourceUrl; // Thêm giá trị của sourceUrl vào JSON
+    data['artist'] = artist; // Thêm giá trị của artist vào JSON
+    data['imageUrl'] = imageUrl; // Thêm giá trị của imageUrl vào JSON
+    data['songs'] = songs?.map((song) => song.toJson()).toList();
     return data;
   }
 }
